@@ -22,7 +22,7 @@ The subprojects in order they are build:
 
 ### A few words about qmake trickery I used
 
-`.qmake.cache` is the way I choose to make my features visible to qmake. Some of them (not all) are used in .pro files. The features iself I devised for various qmake tasks are in `features` dir.
+`.qmake.cache` is the way I choosen to make my features visible to qmake. Some of them (not all) are used in .pro files. The features iself I devised for various qmake tasks are in `features` dir.
 
 Unfortunaly, that's all I can help you with understanding the .pro files. qmake is not very well documented and never will be. It took me much efforts to gather the info to understand how it do things. I have neither time nor space here to explain everything I know and have used to make the features. If you can read Russian and are interested in qmake you can consult [the whole bunch of posts](http://blog.mgsxx.com/?page_id=1294) I wrote in my blog a couple of years ago.
 
