@@ -1,5 +1,5 @@
 # QEverCloudGenerator
-The code used to generate [QEverCloud](https://github.com/mgsxx/QEverCloud)
+The code that was used to generate [QEverCloud](https://github.com/mgsxx/QEverCloud)
 
 Due to a radical change in my interests in programming and also due to the fact that I personaly mostly migrated out of Evernote I do not maintain QEverCloud anymore. So I've decided to upload the whole code that was used to generate QEverCloud sources from the Thrift files Evernote distributes, despite that the sources are somewhat messy and with no comments and are not portable and genarally won't buld right of the bat. But if someone will want to update QEverCloud to support new API's Evernote might introduce or will wan't to change the Thrift protocol implementation I've devised or even create his own generator that do not use Qt but some other library or even language then he/she will definately will want this sources.
 
