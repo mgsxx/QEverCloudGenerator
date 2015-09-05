@@ -1,0 +1,81 @@
+# to be sure qmake was executed
+message(=== mgs_project ===)
+
+include(mgs_common.pri)
+
+defineTest(isShadowBuild) {
+  pwd = $${_PRO_FILE_PWD_}
+  out_pwd = $${OUT_PWD}
+  
+  isEqual(pwd, $${out_pwd}) {
+    return(false)
+  } else {
+    return(true)
+  }
+}
+
+MGS_PROG=D:/sources
+MGS_QMAKE=$${MGS_PROG}/sys/qmake
+
+CONFIG += c++11 # Qt5 only
+CONFIG += silent
+
+CONFIG += mgs_check_proper_ending
+CONFIG += mgs_rc_file
+CONFIG += mgs_libs
+CONFIG += mgs_minqtversion
+CONFIG += mgs_vc2012xp
+CONFIG += mgs_forceqmake
+CONFIG += mgs_translations
+CONFIG += mgs_checkdefines
+
+mgs_ending = $${MGS_QMAKE}/features/_mgs_ending.pri
+
+# switch off debug_and_release
+CONFIG -= debug_and_release debug_and_release_target
+
+# check for shadow build
+# does not work with subdirs
+#!isShadowBuild() {
+#  error(Shadow build is required for mgs_project.)
+#}
+
+# some order in generated files
+DESTDIR = bin
+MOC_DIR = moc
+OBJECTS_DIR = obj
+UI_DIR = ui
+RCC_DIR = rcc
+
+# compatible with Qt Creator wizard for test projects
+DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_/\\\"
+
+_tt = $$basename(OUT_PWD)
+equals(_tt, $$TARGET) {
+_tt = $$section(OUT_PWD, "/", 0, -2)
+_tt = $$basename(_tt)
+}
+
+BUILD_TYPE = $$lower($$section(_tt, "-", -1, -1))
+equals(BUILD_TYPE,test) {
+  BUILD_CONFIG = $$section(_tt, "-", 2, -2)-Debug
+  CONFIG += mgstest
+  #CONFIG += console
+  DEFINES += _MGSTEST
+  DEFINES += $$mgsTextDefine(_MGSTEST_PRO_FILE_PWD, $${_PRO_FILE_PWD_})
+  QT += testlib
+} else {
+  BUILD_CONFIG = $$section(_tt, "-", 2)
+}
+unset(_tt)
+
+# qmake will be called for release always
+CONFIG(release, debug|release) {
+  CONFIG += mgs_forceqmake
+}
+
+# qDebug is NOOP in release mode
+CONFIG(release, debug|release) {
+  DEFINES += QT_NO_DEBUG_OUTPUT
+}
+

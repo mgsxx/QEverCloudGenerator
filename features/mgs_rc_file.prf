@@ -1,0 +1,49 @@
+
+win32 {
+
+  _MGS_RC_ICONS_DEP =
+  for(ico, RC_ICONS) {
+    !exists($${_PRO_FILE_PWD_}/$$ico) {
+      error(RC_ICONS: $$ico is not found!)
+    }
+    _MGS_RC_ICONS_DEP += $${_PRO_FILE_PWD_}/$$ico
+  }
+
+  load(resolve_target, true)  # it is not critical if it fails
+  isEmpty(QMAKE_RESOLVED_TARGET) {
+    TARGET_FILE = $$TARGET
+  } else {
+    TARGET_FILE = $$split(QMAKE_RESOLVED_TARGET,/)
+    TARGET_FILE = $$last(TARGET_FILE)
+  }
+ 
+  isEmpty(MGS_VERSION): MGS_VERSION = $$VERSION
+
+  # launch generator
+  !isEmpty(RC_ICONS)|!isEmpty(MGS_VERSION) {
+    RC_FILE = $${OUT_PWD}/mgs_project.rc
+    QMAKE_CLEAN += $$system_path($$RC_FILE)
+    RC_INCLUDEPATH += $$_PRO_FILE_PWD_  #icons are searched here now
+
+    # recompile rc on icons changing
+    mgs_rcicons.target = mgs_project.rc
+    mgs_rcicons.depends = $$_MGS_RC_ICONS_DEP
+    #mgs_rcicons.commands = $$system_path($${MGS_QMAKE}/tools/touch) mgs_project.rc
+    mgs_rcicons.commands = $$system_path($${MGS_QMAKE}/tools/mgs_rcgen) \"$$system_path($$OUT_PWD)\" \"$$RC_ICONS\"\
+        \"$$MGS_VERSION\" \"$$mgsCmdParam($$QMAKE_TARGET_COMPANY)\" \"$$mgsCmdParam($$QMAKE_TARGET_PRODUCT)\"\
+        \"$$mgsCmdParam($$QMAKE_TARGET_DESCRIPTION)\" \"$$mgsCmdParam($$QMAKE_TARGET_COPYRIGHT)\" \"$$TARGET_FILE\"
+    QMAKE_EXTRA_TARGETS += mgs_rcicons
+    PRE_TARGETDEPS += mgs_project.rc
+    unset(_MGS_RC_ICONS_DEP)
+  }
+  unset(TARGET_FILE)
+
+  !isEmpty(MGS_VERSION) {
+    DEFINES += $$mgsTextDefine(MGS_VERSION,$$MGS_VERSION)
+    DEFINES += $$mgsTextDefine(MGS_TARGET_COMPANY,$$QMAKE_TARGET_COMPANY)
+    DEFINES += $$mgsTextDefine(MGS_TARGET_PRODUCT,$$QMAKE_TARGET_PRODUCT)
+    DEFINES += $$mgsTextDefine(MGS_TARGET_COPYRIGHT,$$QMAKE_TARGET_COPYRIGHT)
+    DEFINES += $$mgsTextDefine(MGS_TARGET_DESCRIPTION,$$QMAKE_TARGET_DESCRIPTION)
+  }
+
+}

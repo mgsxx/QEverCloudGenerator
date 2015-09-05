@@ -1,0 +1,19 @@
+
+!isEmpty(MGS_MIN_QT_VERSION) {
+
+  __mgs_ver = $$split(MGS_MIN_QT_VERSION,'.')
+  lessThan(QT_MAJOR_VERSION, $$member(__mgs_ver, 0)) {
+    error(Minimum Qt version required: $$MGS_MIN_QT_VERSION while Qt version is: $$QT_VERSION)
+  } 
+  equals(QT_MAJOR_VERSION, $$member(__mgs_ver, 0)) {
+    lessThan(QT_MINOR_VERSION, $$member(__mgs_ver, 1)) {
+      error(Minimum Qt version required: $$MGS_MIN_QT_VERSION while Qt version is: $$QT_VERSION)
+    }
+    equals(QT_MINOR_VERSION, $$member(__mgs_ver, 1)) {
+      lessThan(QT_PATCH_VERSION, $$member(__mgs_ver, 2)) {
+        error(Minimum Qt version required: $$MGS_MIN_QT_VERSION while Qt version is: $$QT_VERSION)
+      }
+    }
+  }
+  unset(__mgs_ver)
+}

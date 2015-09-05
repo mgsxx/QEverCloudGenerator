@@ -1,0 +1,68 @@
+
+# определ€ю конфигурацию как им€ каталога shadow build без имени проекта
+__outpath = $$basename(OUT_PWD)
+MYLIB_CONFIG = $$section(__outpath, "-", 2)
+unset(__outpath)
+
+# префиксы-суффиксы, добавл€емые к имени библиотеки
+win32-msvc* {
+  MYLIB_PREFIX =
+  MYLIB_EXT = .lib
+} else { #mingw
+  MYLIB_PREFIX = lib
+  MYLIB_EXT = .a
+}
+
+# объ€сн€етс€ далее в посте
+defineReplace(registerStandardMyLib) {
+  libTargetName = $$1
+  MYLIB_PATH = $${MY_PROG}/lib/$${libTargetName}/build-$${libTargetName}-$${MYLIB_CONFIG}/bin/$${MYLIB_PREFIX}$${libTargetName}$${MYLIB_EXT}
+  isEmpty(MYLIB_NESTED) {
+    INCLUDEPATH += $${MY_PROG}/lib/$${libTargetName}/include
+    export(INCLUDEPATH)
+  }
+  isEqual(TEMPLATE, app) {
+    LIBS += $${MYLIB_PATH}
+    PRE_TARGETDEPS += $${MYLIB_PATH}
+    export(LIBS)
+    export(PRE_TARGETDEPS)
+  }
+  return($$MYLIB_PATH)
+}
+
+# ÷икл проходит по всем библиотекам в MYLIBS
+# дл€ каждой из них инклюдитс€ файл .pri в каталоге lib
+# р€дом с mylib.prf. »м€ файла = имени библиотеки.
+# ≈сли библиотека использует другие библиотеки, то в ее
+# .pri файле они должны быть указаны в переменной MYLIBS.
+# ÷икл работает до тех пор, пока не будут обработаны все библиотеки.
+
+# 100 уровней вложенности - € параноик
+__iterlist = 1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0   AAA 
+
+MYLIB_NESTED =
+__handled_libs =
+for(__iter, __iterlist) {
+  isEqual(__iter, AAA) {
+    error(MYLIBS: level of nesting limit is reached!)
+  }
+  __mylibs = $$unique(MYLIBS)
+  __mylibs -= __handled_libs
+  isEmpty(__mylibs): break()
+  clear(MYLIBS)
+
+  for(__mylib, __mylibs) {
+    !exists($${PWD}/lib/$${__mylib}.pri) {
+      error(Libary $$__mylib is not configured.)
+    }
+    include($${PWD}/lib/$${__mylib}.pri)
+    __handled_libs += __mylib
+  }
+  MYLIB_NESTED = 1
+
+}
+
+unset(__mylib)
+unset(__iter)
+unset(__iterlist)
+unset(__handled_libs)

@@ -1,0 +1,29 @@
+
+# implies that qmake is always called at least when .pro file is changed
+# for msvc I use forceqmake 
+# this code works as axpected for mingw
+# but for msvc second build may be required after DEFINES changing
+
+defineReplace(checkDefinesForChanges) {
+  old_def = $$cat($$OUT_PWD/defines.txt)
+  curr_def = $$DEFINES
+  curr_def -= $$old_def
+  old_def -= $$DEFINES
+  diff = $$old_def $$curr_def
+  !isEmpty(diff) {
+    message(DEFINES WERE CHANGED)
+    A = $$system(del /F /Q /S $$system_path($${OUT_PWD}/*.*))
+    write_file($$OUT_PWD/defines.txt, DEFINES);
+  }
+  return(???)
+}
+
+_defines_check_ = ???
+_defines_check.name = check on defines being changed
+_defines_check.input = _defines_check_
+_defines_check.CONFIG += no_link ignore_no_exist
+_defines_check.depends = ???
+_defines_check.commands = ???
+_defines_check.output_function = checkDefinesForChanges
+QMAKE_EXTRA_COMPILERS += _defines_check
+

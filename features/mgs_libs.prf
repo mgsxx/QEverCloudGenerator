@@ -1,0 +1,54 @@
+
+win32-msvc* {
+  MGSLIB_PREFIX =
+  MGSLIB_EXT = .lib
+} else { #mingw
+  MGSLIB_PREFIX = lib
+  MGSLIB_EXT = .a
+}
+
+defineReplace(registerStandardMgsLib) {
+  libTargetName = $$1
+  MGSLIB_PATH = $${MGS_PROG}/lib/$${libTargetName}/build-$${libTargetName}-$${BUILD_CONFIG}/bin/$${MGSLIB_PREFIX}$${libTargetName}$${MGSLIB_EXT}
+  isEmpty(__nested) {
+    INCLUDEPATH += $${MGS_PROG}/lib/$${libTargetName}/include
+    export(INCLUDEPATH)
+  }
+  isEqual(TEMPLATE, app) {
+    LIBS += $${MGSLIB_PATH}
+    PRE_TARGETDEPS += $${MGSLIB_PATH}
+    export(LIBS)
+    export(PRE_TARGETDEPS)
+  }
+  return($$MGSLIB_PATH)
+}
+
+# 100 levels of nesting
+__iterlist = 1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0  1 2 3 4 5 6 7 8 9 0   AAA 
+
+__nested =
+__handled_libs =
+for(__iter, __iterlist) {
+  isEqual(__iter, AAA) {
+    error(MGSLIBS: level of nesting limit is reached!)
+  }
+  __mgslibs = $$unique(MGSLIBS)
+  __mgslibs -= __handled_libs
+  isEmpty(__mgslibs): break()
+  clear(MGSLIBS)
+
+  for(__mgslib, __mgslibs) {
+    !exists($${MGS_QMAKE}/lib/$${__mgslib}.pri) {
+      error(Libary $$mgslib is not configured.)
+    }
+    include($${MGS_QMAKE}/lib/$${__mgslib}.pri)
+    __handled_libs += __mgslib
+  }
+  __nested = 1
+
+}
+
+unset(__mgslib)
+unset(__iter)
+unset(__iterlist)
+unset(__handled_libs)

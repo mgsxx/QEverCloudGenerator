@@ -1,0 +1,4 @@
+!isEmpty(FOLDER)|mgstest {
+  error(".pro file must end with: include($${LITERAL_DOLLAR}$${LITERAL_DOLLAR}mgs_ending)")
+}
+

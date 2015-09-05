@@ -1,0 +1,11 @@
+
+#QMAKE_EXTRA_TARGETS += forceqmake
+#forceqmake.target = $(MAKEFILE)
+#forceqmake.depends = FORCE
+
+QMAKE_EXTRA_TARGETS += after_build_makefile_del firsthook_makefile_del
+firsthook_makefile_del.target = first
+firsthook_makefile_del.depends = after_build_makefile_del
+after_build_makefile_del.depends = all
+after_build_makefile_del.CONFIG = phony
+after_build_makefile_del.commands = $(DEL_FILE) $(MAKEFILE)
