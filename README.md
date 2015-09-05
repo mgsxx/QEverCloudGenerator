@@ -9,7 +9,7 @@ As of time of writing there are people who use QEverCloud in their projects. Som
 
 This is subdirs project with multi-stage build process where some parts depend on others in their build process. I have used havily some pretty advanced qmake trickery for make all this mess to build on my Windows machine with both mingw and msvc compilers. It was not flawless but worked well enough.
 
-The subprojects in order they are building:
+The subprojects in the order they are building:
 
 - [**Lemon**](http://www.hwaci.com/sw/lemon/). It's a great LALR(1) parser written in C.
 - **ThriftParser**. The meat. It uses LEMON to parse the Evernote Thrift files (it is NOT a general purpose Thrift parser) to gather info from the files (including comments) and then generates the bulk of the QEverCloud.
