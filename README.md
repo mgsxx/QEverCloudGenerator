@@ -15,7 +15,7 @@ The subprojects in the order they are building:
 - **ThriftParser**. The meat. It uses LEMON to parse the Evernote Thrift files (it is NOT a general purpose Thrift parser) to gather info from the files (including comments) and then generates the bulk of the QEverCloud.
 - **QEverCloud**. The end product.
 - **TestEverCloud**.  Was used to test that QEverCloud works after build.
-- **DoxyGen**. In release builds this subproject generates the documentation from QEverCloud subproject in html and qch formats. The latter you can include in Qt Creator and have context help on the Evernote API.
+- **DoxyGen**. In release builds this subproject generates the documentation from QEverCloud subproject in html and qch formats. The latter you can include in Qt Creator and have context help for the Evernote API.
 - **NotePoster**. Example.
 - **CreateANote**. Another example.
 - **CreateANoteAsync**. Yet another example.
